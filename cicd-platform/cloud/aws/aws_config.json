@@ -1,0 +1,15 @@
+{
+  "service": "cicd-platform",
+  "aws": {
+    "region": "us-east-1",
+    "ec2": [
+      {
+        "name": "jenkins-cicd",
+        "imageId": "ami-04b70fa74e45c3917",
+        "instanceType": "t2.medium",
+        "minCount": 1,
+        "maxCount": 1
+      }
+    ]
+  }
+}
