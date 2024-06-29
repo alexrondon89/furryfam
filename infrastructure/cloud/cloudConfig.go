@@ -2,8 +2,8 @@ package cloud
 
 import (
 	"fmt"
-	"github.com/alexrondon89/furryfam/cicd-platform/cloud/aws"
-	"github.com/alexrondon89/furryfam/cicd-platform/config"
+	"github.com/alexrondon89/furryfam/infrastructure/cloud/aws"
+	"github.com/alexrondon89/furryfam/infrastructure/config"
 	"github.com/spf13/viper"
 	"log"
 )

@@ -2,18 +2,21 @@ package config
 
 type PlatformConfig struct {
 	Service string
-	Aws     *aws
+	Aws     *Aws
 }
 
-type aws struct {
+type Aws struct {
 	Region string
-	Ec2    []ec2
+	Ec2    map[string]VM
 }
 
-type ec2 struct {
+type VM struct {
+	User         string
 	Name         string
 	ImageId      string
 	InstanceType string
 	MinCount     int32
 	MaxCount     int32
+	KeyName      string
+	KeyLocation  string
 }

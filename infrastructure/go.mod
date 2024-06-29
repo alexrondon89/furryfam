@@ -1,13 +1,13 @@
-module github.com/alexrondon89/furryfam/cicd-platform
+module github.com/alexrondon89/furryfam/infrastructure
 
 go 1.21.6
 
 require (
-	github.com/aws/aws-sdk-go v1.54.4
 	github.com/aws/aws-sdk-go-v2 v1.30.0
 	github.com/aws/aws-sdk-go-v2/config v1.27.21
 	github.com/aws/aws-sdk-go-v2/service/ec2 v1.165.1
 	github.com/spf13/viper v1.19.0
+	golang.org/x/crypto v0.21.0
 )
 
 require (
