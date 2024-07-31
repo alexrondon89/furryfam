@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/alexrondon89/furryfam/infrastructure/cloud"
+	"github.com/alexrondon89/furryfam/infrastructure/internal/cloud"
 	"github.com/alexrondon89/furryfam/infrastructure/internal/srv"
 )
 

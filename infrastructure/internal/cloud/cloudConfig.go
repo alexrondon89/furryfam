@@ -2,8 +2,8 @@ package cloud
 
 import (
 	"fmt"
-	"github.com/alexrondon89/furryfam/infrastructure/cloud/aws"
 	"github.com/alexrondon89/furryfam/infrastructure/config"
+	"github.com/alexrondon89/furryfam/infrastructure/internal/cloud/aws"
 	"github.com/spf13/viper"
 	"log"
 )
@@ -28,7 +28,7 @@ func GetCloudInstance(platformConfig config.PlatformConfig) CloudConfig {
 func GetConfig(configName, configPath, configType string) config.PlatformConfig {
 	conf := &config.PlatformConfig{}
 	viper.SetConfigName(configName)
-	viper.AddConfigPath(fmt.Sprintf("./cloud/%s", configPath))
+	viper.AddConfigPath(fmt.Sprintf("./infrastructure/internal/cloud/%s", configPath))
 	viper.SetConfigType(configType)
 	if err := viper.ReadInConfig(); err != nil {
 		log.Fatalf("Error reading config file, %s", err)

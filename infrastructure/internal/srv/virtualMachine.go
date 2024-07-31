@@ -9,7 +9,9 @@ type CloudInstance interface {
 	GetVirtualMachineConfiguration(string) platfConfig.VM
 	CreateVirtualMachineInstance(platfConfig.VM) VMInfo
 	ConnectToVirtualMachine(platfConfig.VM, VMInfo) *ssh.Client
-	InstallDocker(session *ssh.Client)
+	InstallDocker(*ssh.Client)
+	CopyFilesToEC2(platfConfig.VM, VMInfo)
+	CreateJenkinsContainer(*ssh.Client, platfConfig.VM, VMInfo)
 }
 
 type VMInfo struct {
@@ -32,11 +34,13 @@ func (inst CloudSrv) CreateVirtualMachine(purpose string) {
 	vmConfig := inst.Srv.GetVirtualMachineConfiguration(purpose)
 	vmInfo := inst.Srv.CreateVirtualMachineInstance(vmConfig)
 	//vmInfo := VMInfo{
-	//	InstanceID: "i-0f3f8972f7a3d7f12",
-	//	PublicIP:   "54.172.154.55",
-	//	PrivateIP:  "172.31.56.72",
+	//	InstanceID: "i-04125ed5f1bdaeb7b",
+	//	PublicIP:   "52.91.38.142",
+	//	PrivateIP:  "172.31.24.71",
 	//}
 	sshClient := inst.Srv.ConnectToVirtualMachine(vmConfig, vmInfo)
 	defer sshClient.Close()
 	inst.Srv.InstallDocker(sshClient)
+	inst.Srv.CopyFilesToEC2(vmConfig, vmInfo)
+	inst.Srv.CreateJenkinsContainer(sshClient, vmConfig, vmInfo)
 }

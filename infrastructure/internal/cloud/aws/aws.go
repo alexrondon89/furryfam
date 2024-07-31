@@ -11,6 +11,8 @@ import (
 	"github.com/spf13/viper"
 	"golang.org/x/crypto/ssh"
 	"log"
+	"os"
+	"os/exec"
 	"time"
 
 	platfConfig "github.com/alexrondon89/furryfam/infrastructure/config"
@@ -94,8 +96,8 @@ func (awsInst *AwsInstance) CreateVirtualMachineInstance(vm platfConfig.VM) srv.
 
 	describeInstancesOutput := awsInst.getDescribeInstance(ec2Client, instanceId)
 	instance := describeInstancesOutput.Reservations[0].Instances[0]
-	//securityGroupId := instance.SecurityGroups[0].GroupId
-	//awsInst.authorizeSecurityGroup(ec2Client, *securityGroupId)
+	securityGroupId := instance.SecurityGroups[0].GroupId
+	awsInst.authorizeSecurityGroup(ec2Client, *securityGroupId)
 
 	return srv.VMInfo{
 		InstanceID: *instance.InstanceId,
@@ -135,18 +137,55 @@ func (awsInst *AwsInstance) InstallDocker(sshClient *ssh.Client) {
 	fmt.Printf("docker installed")
 }
 
+func (awsInst *AwsInstance) CopyFilesToEC2(vm platfConfig.VM, vmInfo srv.VMInfo) {
+	dockerFileJenkins := "./infrastructure/deployments/jenkins/Dockerfile"
+	createPipelineContainers := "./infrastructure/scripts/create_pipeline_containers.sh"
+
+	files := []string{
+		dockerFileJenkins,
+		createPipelineContainers,
+	}
+	for _, file := range files {
+		if _, err := os.Stat(file); os.IsNotExist(err) {
+			log.Fatalf("file %s does not exist", file)
+		}
+
+		cmd := exec.Command("scp", "-i", vm.KeyLocation, file, "ubuntu@"+vmInfo.PublicIP+":/home/ubuntu/")
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Fatalf("\nfailed to copy file %s: %s", file, err)
+		}
+		fmt.Printf(string(output))
+	}
+	fmt.Printf("files copied...")
+}
+
+func (awsInst *AwsInstance) CreateJenkinsContainer(sshClient *ssh.Client, vm platfConfig.VM, vmInfo srv.VMInfo) {
+	cmd := `sudo sh create_pipeline_containers.sh`
+	session, err := sshClient.NewSession()
+	if err != nil {
+		log.Fatal("Failed to create session: ", err)
+	}
+	output, err := session.CombinedOutput(cmd)
+	if err != nil {
+		log.Fatalf("failed to run command in CreateJenkinsContainer: %s", err)
+	}
+	fmt.Printf(string(output))
+	session.Close()
+}
+
 func (awsInst *AwsInstance) authorizeSecurityGroup(ec2Client *ec2.Client, securityGroupID string) {
 	authorizeSecurityGroupIngressInput := &ec2.AuthorizeSecurityGroupIngressInput{
 		GroupId: aws.String(securityGroupID),
 		IpPermissions: []types.IpPermission{
 			{
 				IpProtocol: aws.String("tcp"),
-				FromPort:   aws.Int32(22),
-				ToPort:     aws.Int32(22),
+				FromPort:   aws.Int32(8080),
+				ToPort:     aws.Int32(8080),
 				IpRanges: []types.IpRange{
 					{
 						CidrIp:      aws.String("0.0.0.0/0"),
-						Description: aws.String("Allow SSH"),
+						Description: aws.String("Allow HTTP jenkins"),
 					},
 				},
 			},
