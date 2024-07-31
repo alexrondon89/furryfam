@@ -1,0 +1,2 @@
+- put out from cloud/aws the methods InstallDocker, CopyFilesToEC2 and CreateJenkinsContainer
+- create a new version dynamically for each image in the create_pipeline_containter script

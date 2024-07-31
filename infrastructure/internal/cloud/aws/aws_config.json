@@ -1,0 +1,18 @@
+{
+  "service": "infrastructure",
+  "aws": {
+    "region": "us-east-1",
+    "ec2": {
+      "cicd": {
+        "user": "ubuntu",
+        "name": "jenkins-cicd",
+        "imageId": "ami-04b70fa74e45c3917",
+        "instanceType": "t2.medium",
+        "minCount": 1,
+        "maxCount": 1,
+        "keyName": "furry-fam-key",
+        "keyLocation": "/Users/cristhian/Desktop/folders/about-Go/furry-fam/furry-fam-key.pem"
+      }
+    }
+  }
+}
