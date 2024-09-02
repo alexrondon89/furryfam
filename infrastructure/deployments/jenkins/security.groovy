@@ -1,25 +1,17 @@
 import jenkins.model.*
 import hudson.security.*
-import org.jenkinsci.plugins.plaincredentials.impl.StringCredentialsImpl
-import com.cloudbees.plugins.credentials.*
-import com.cloudbees.plugins.credentials.domains.*
+import hudson.model.*
 
-def instance = Jenkins.getInstance()
+def instance = Jenkins.get()
 
-// Deshabilitar el asistente de instalación
-instance.setInstallState(InstallState.INITIAL_SETUP_COMPLETED)
-
-// Configurar seguridad básica
+// Configurar el sistema de seguridad
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-def user = hudsonRealm.createAccount("admin", "adminPassword")
+hudsonRealm.createAccount('admin', 'admin')
 instance.setSecurityRealm(hudsonRealm)
 
 def strategy = new FullControlOnceLoggedInAuthorizationStrategy()
+strategy.setAllowAnonymousRead(false)
 instance.setAuthorizationStrategy(strategy)
 
-// Opcional: Configurar un token de API para el usuario
-CredentialsStore store = Jenkins.instance.getExtensionList('com.cloudbees.plugins.credentials.SystemCredentialsProvider')[0].getStore()
-def token = new StringCredentialsImpl(CredentialsScope.GLOBAL, "admin-token", "description", Secret.fromString("sometoken"))
-store.addCredentials(Domain.global(), token)
-
+// Guardar la configuración
 instance.save()
