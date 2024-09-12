@@ -30,7 +30,7 @@ RUN if [ $(! -d "/usr/share/jenkins/ref/init.groovy.d") ]; then mkdir /usr/share
 # to create an admin user automatically
 COPY ./jenkins/security.groovy /usr/share/jenkins/ref/init.groovy.d/security.groovy
 # to create the pipeline for services
-COPY ./jenkins/userPipeline.groovy /usr/share/jenkins/ref/init.groovy.d/userPipeline.groovy
+COPY ./jenkins/user-pipeline.groovy /usr/share/jenkins/ref/init.groovy.d/user-pipeline.groovy
 
 # ansible files
 COPY ./ansible/ /var/jenkins_home/ansible/

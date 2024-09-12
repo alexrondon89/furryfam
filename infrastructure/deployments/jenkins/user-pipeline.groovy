@@ -35,7 +35,7 @@ pipeline {
                     sh 'chmod +x $WORKSPACE/create_ansible_container.sh'
 
                     // Ejecutar el script copiado
-                    sh '$WORKSPACE/create_ansible_container.sh userService'
+                    sh '$WORKSPACE/create_ansible_container.sh user-service'
                 }
             }
         }

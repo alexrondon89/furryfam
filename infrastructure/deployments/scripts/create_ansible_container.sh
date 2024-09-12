@@ -19,6 +19,7 @@ fi
 
 # creating image and container for ansible service
 echo "building and running ${CONTAINER_NAME} in ${ENVIRONMENT}"
+echo "docker build --build-arg FILE_NAME=$1 --no-cache -t $IMAGE_NAME:latest -f Dockerfile ."
 docker build --build-arg FILE_NAME=$1 --no-cache -t "$IMAGE_NAME":latest -f Dockerfile .
 
 echo "executing $CONTAINER_NAME $IMAGE_NAME ..."
