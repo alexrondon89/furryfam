@@ -25,7 +25,7 @@ pipeline {
                 script {
                     // Copiar el archivo `create_ansible_container.sh` al workspace
                     sh 'cp /var/jenkins_home/scripts/create_ansible_container.sh $WORKSPACE'
-                    sh 'cp /var/jenkins_home/ansible/userService.yaml $WORKSPACE'
+                    sh 'cp /var/jenkins_home/ansible/user-service.yaml $WORKSPACE'
                     sh 'cp /var/jenkins_home/ansible/Dockerfile $WORKSPACE'
 
                     // Listar los archivos copiados para verificar que deploy.yaml está presente
