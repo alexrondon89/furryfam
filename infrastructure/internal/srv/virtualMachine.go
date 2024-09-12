@@ -34,13 +34,16 @@ func (inst CloudSrv) CreateVirtualMachine(purpose string) {
 	vmConfig := inst.Srv.GetVirtualMachineConfiguration(purpose)
 	vmInfo := inst.Srv.CreateVirtualMachineInstance(vmConfig)
 	//vmInfo := VMInfo{
-	//	InstanceID: "i-04125ed5f1bdaeb7b",
-	//	PublicIP:   "52.91.38.142",
-	//	PrivateIP:  "172.31.24.71",
+	//	InstanceID: "i-0c1458da9208b80ca",
+	//	PublicIP:   "54.146.253.45",
+	//	PrivateIP:  "172.31.16.47",
 	//}
 	sshClient := inst.Srv.ConnectToVirtualMachine(vmConfig, vmInfo)
 	defer sshClient.Close()
 	inst.Srv.InstallDocker(sshClient)
 	inst.Srv.CopyFilesToEC2(vmConfig, vmInfo)
-	inst.Srv.CreateJenkinsContainer(sshClient, vmConfig, vmInfo)
+	// a new ssh client created to avoid error with docker and the new docker user rights
+	sshClientTwo := inst.Srv.ConnectToVirtualMachine(vmConfig, vmInfo)
+	defer sshClient.Close()
+	inst.Srv.CreateJenkinsContainer(sshClientTwo, vmConfig, vmInfo)
 }

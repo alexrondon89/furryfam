@@ -1,2 +1,5 @@
+- add a check to see if an ec2 instance already exist, delete it and creates a new one
+- exists a security group bu default. Each instance created must have its own security group or create
+a generic security  group for all the jenkins instance ec2
 - put out from cloud/aws the methods InstallDocker, CopyFilesToEC2 and CreateJenkinsContainer
-- create a new version dynamically for each image in the create_pipeline_containter script
+- versioning dynamically each image in the create_pipeline_containter script

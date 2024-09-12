@@ -13,6 +13,7 @@ import (
 	"log"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"time"
 
 	platfConfig "github.com/alexrondon89/furryfam/infrastructure/config"
@@ -96,8 +97,8 @@ func (awsInst *AwsInstance) CreateVirtualMachineInstance(vm platfConfig.VM) srv.
 
 	describeInstancesOutput := awsInst.getDescribeInstance(ec2Client, instanceId)
 	instance := describeInstancesOutput.Reservations[0].Instances[0]
-	securityGroupId := instance.SecurityGroups[0].GroupId
-	awsInst.authorizeSecurityGroup(ec2Client, *securityGroupId)
+	//securityGroupId := instance.SecurityGroups[0].GroupId
+	//awsInst.authorizeSecurityGroup(ec2Client, *securityGroupId)
 
 	return srv.VMInfo{
 		InstanceID: *instance.InstanceId,
@@ -119,6 +120,9 @@ func (awsInst *AwsInstance) InstallDocker(sshClient *ssh.Client) {
 		"sudo apt-get install docker.io -y",
 		"sudo systemctl start docker",
 		"sudo systemctl enable docker",
+		"sudo groupadd docker || true",  // Usa '|| true' para ignorar errores si el grupo ya existe
+		"sudo usermod -aG docker $USER", // Asegúrate de que $USER está definido correctamente
+		"sudo systemctl restart docker", // Reinicia Docker para aplicar los cambios de grupo
 	}
 
 	for _, cmd := range cmds {
@@ -138,40 +142,59 @@ func (awsInst *AwsInstance) InstallDocker(sshClient *ssh.Client) {
 }
 
 func (awsInst *AwsInstance) CopyFilesToEC2(vm platfConfig.VM, vmInfo srv.VMInfo) {
-	dockerFileJenkins := "./infrastructure/deployments/jenkins/Dockerfile"
-	createPipelineContainers := "./infrastructure/scripts/create_pipeline_containers.sh"
+	dockerFileJenkins := "./infrastructure/deployments/jenkins/*"
+	createPipelineContainers := "./infrastructure/deployments/scripts/create_jenkins_container.sh"
 
 	files := []string{
 		dockerFileJenkins,
 		createPipelineContainers,
 	}
-	for _, file := range files {
-		if _, err := os.Stat(file); os.IsNotExist(err) {
-			log.Fatalf("file %s does not exist", file)
+	for _, pattern := range files {
+		// Expandir el patrón de globo para archivos
+		matches, err := filepath.Glob(pattern)
+		if err != nil {
+			log.Fatalf("failed to glob %s: %v", pattern, err)
+		}
+		if len(matches) == 0 {
+			log.Fatalf("no files match the pattern %s", pattern)
 		}
 
-		cmd := exec.Command("scp", "-i", vm.KeyLocation, file, "ubuntu@"+vmInfo.PublicIP+":/home/ubuntu/")
-		output, err := cmd.CombinedOutput()
-		if err != nil {
-			log.Fatalf("\nfailed to copy file %s: %s", file, err)
+		for _, file := range matches {
+			if _, err := os.Stat(file); os.IsNotExist(err) {
+				log.Fatalf("file %s does not exist", file)
+			}
+
+			cmd := exec.Command("scp", "-r", "-o", "StrictHostKeyChecking=no", "-i", vm.KeyLocation, file, "ubuntu@"+vmInfo.PublicIP+":/home/ubuntu/")
+			output, err := cmd.CombinedOutput()
+			if err != nil {
+				log.Fatalf("\nfailed to copy file %s: %s", file, err)
+			}
+			fmt.Printf("Output: %s\n", string(output))
 		}
-		fmt.Printf(string(output))
 	}
-	fmt.Printf("files copied...")
+	fmt.Println("files copied...")
 }
 
 func (awsInst *AwsInstance) CreateJenkinsContainer(sshClient *ssh.Client, vm platfConfig.VM, vmInfo srv.VMInfo) {
-	cmd := `sudo sh create_pipeline_containers.sh`
-	session, err := sshClient.NewSession()
-	if err != nil {
-		log.Fatal("Failed to create session: ", err)
+	cmds := []string{
+		"chmod +x create_jenkins_container.sh",
+		"./create_jenkins_container.sh",
 	}
-	output, err := session.CombinedOutput(cmd)
-	if err != nil {
-		log.Fatalf("failed to run command in CreateJenkinsContainer: %s", err)
+
+	for _, cmd := range cmds {
+		session, err := sshClient.NewSession()
+		if err != nil {
+			log.Fatal("Failed to create session: ", err)
+		}
+
+		output, err := session.CombinedOutput(cmd)
+		if err != nil {
+			log.Fatalf("failed to run command in CreateJenkinsContainer: %s", err)
+		}
+		fmt.Printf(string(output))
+		session.Close()
 	}
-	fmt.Printf(string(output))
-	session.Close()
+	fmt.Printf("jenkins container created")
 }
 
 func (awsInst *AwsInstance) authorizeSecurityGroup(ec2Client *ec2.Client, securityGroupID string) {
@@ -194,7 +217,7 @@ func (awsInst *AwsInstance) authorizeSecurityGroup(ec2Client *ec2.Client, securi
 
 	_, err := ec2Client.AuthorizeSecurityGroupIngress(context.TODO(), authorizeSecurityGroupIngressInput)
 	if err != nil {
-		log.Fatalf("Failed to authorize security group ingress: %v", err)
+		log.Printf("Failed to authorize security group ingress: %v\n", err)
 	}
 
 	fmt.Println("Successfully updated security group to allow SSH")
