@@ -24,18 +24,18 @@ pipeline {
             steps {
                 script {
                     // Copiar el archivo `create_ansible_container.sh` al workspace
-                    sh 'cp /var/jenkins_home/scripts/create_ansible_container.sh $WORKSPACE'
-                    sh 'cp /var/jenkins_home/ansible/user-service.yaml $WORKSPACE'
-                    sh 'cp /var/jenkins_home/ansible/Dockerfile $WORKSPACE'
+                    //sh 'cp /var/jenkins_home/infrastructure/deployments/scripts/create_ansible_container.sh $WORKSPACE'
+                    //sh 'cp /var/jenkins_home/infrastructure/deployments/ansible/user-service.yaml $WORKSPACE'
+                    //sh 'cp /var/jenkins_home/infrastructure/deployments/ansible/Dockerfile $WORKSPACE'
 
                     // Listar los archivos copiados para verificar que deploy.yaml está presente
                     sh 'ls -l $WORKSPACE'
 
                     // Dar permisos de ejecución al archivo copiado (por si no los tiene)
-                    sh 'chmod +x $WORKSPACE/create_ansible_container.sh'
+                    sh 'chmod +x $WORKSPACE/infrastructure/deployments/scripts/create_ansible_container.sh'
 
                     // Ejecutar el script copiado
-                    sh '$WORKSPACE/create_ansible_container.sh user-service'
+                    sh '$WORKSPACE/infrastructure/deployments/scripts/create_ansible_container.sh user-service'
                 }
             }
         }

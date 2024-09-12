@@ -20,7 +20,7 @@ fi
 # creating image and container for ansible service
 echo "building and running ${CONTAINER_NAME} in ${ENVIRONMENT}"
 echo "docker build --build-arg FILE_NAME=$1 --no-cache -t $IMAGE_NAME:latest -f Dockerfile ."
-docker build --build-arg FILE_NAME=$1 --no-cache -t "$IMAGE_NAME":latest -f Dockerfile .
+docker build --build-arg FILE_NAME=$1 --no-cache -t "$IMAGE_NAME":latest -f ./infrastructure/deployments/ansible/Dockerfile ./infrastructure/deployments/ansible/
 
 echo "executing $CONTAINER_NAME $IMAGE_NAME ..."
 docker run --rm --name "${CONTAINER_NAME}" "${IMAGE_NAME}" ansible-playbook ./$1.yaml

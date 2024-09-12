@@ -32,8 +32,4 @@ COPY ./jenkins/security.groovy /usr/share/jenkins/ref/init.groovy.d/security.gro
 # to create the pipeline for services
 COPY ./jenkins/user-pipeline.groovy /usr/share/jenkins/ref/init.groovy.d/user-pipeline.groovy
 
-# ansible files
-COPY ./ansible/ /var/jenkins_home/ansible/
-# scripts files
-COPY ./scripts/ /var/jenkins_home/scripts/
 EXPOSE 8080 50000
