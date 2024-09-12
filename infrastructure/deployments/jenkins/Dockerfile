@@ -32,5 +32,6 @@ COPY ./jenkins/ /usr/share/jenkins/ref/init.groovy.d/security.groovy/
 
 # ansible files
 COPY ./ansible/ /var/jenkins_home/ansible/
+# scripts files
 COPY ./scripts/ /var/jenkins_home/scripts/
 EXPOSE 8080 50000

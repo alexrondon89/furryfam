@@ -14,7 +14,7 @@ if [ "$(docker images -q "${IMAGE_NAME}")" ]; then
   echo "image ${IMAGE_NAME} exists... deleting"
   docker rmi "${IMAGE_NAME}"
 else
-  echo "image ${IMAGE_NAME} not exists... it will be downloaded"
+  echo "image ${IMAGE_NAME} not exists... it will be created"
 fi
 
 # creating image and container for jenkins service
