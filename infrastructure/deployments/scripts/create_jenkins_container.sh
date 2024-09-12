@@ -18,7 +18,7 @@ else
 fi
 
 # creating image and container for jenkins service
-docker build --no-cache -f ./../../../tmp/deployments/jenkins/Dockerfile -t jenkins-image:latest ./../../../tmp/deployments
+docker build --no-cache -f ./tmp/deployments/jenkins/Dockerfile -t jenkins-image:latest ./tmp/deployments
 docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
 
 # checking if jenkins container is running without asking for initial token
