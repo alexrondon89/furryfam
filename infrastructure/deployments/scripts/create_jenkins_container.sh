@@ -18,14 +18,7 @@ else
 fi
 
 # creating image and container for jenkins service
-if [ "$ENVIRONMENT" != 'local' ]; then
-  echo "building and running ${CONTAINER_NAME} in ${ENVIRONMENT}"
-  docker build --no-cache -t jenkins-image:latest -f Dockerfile .
-else
-  echo "building and running ${CONTAINER_NAME} locally"
-  docker build --no-cache -f ./../../../infrastructure/deployments/jenkins/Dockerfile -t jenkins-image:latest ./../../../infrastructure/deployments/
-fi
-
+docker build --no-cache -f /tmp/deployments/jenkins/Dockerfile -t jenkins-image:latest /tmp/deployments
 docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
 
 # checking if jenkins container is running without asking for initial token

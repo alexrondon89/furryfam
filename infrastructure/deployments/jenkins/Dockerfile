@@ -28,12 +28,9 @@ RUN echo 2.0 > /usr/share/jenkins/ref/jenkins.install.UpgradeWizard.state
 RUN if [ $(! -d "/usr/share/jenkins/ref/init.groovy.d") ]; then mkdir /usr/share/jenkins/ref/init.groovy.d; fi
 
 # to create an admin user automatically
-COPY ./jenkins/security.groovy /usr/share/jenkins/ref/init.groovy.d/security.groovy
-
-# to create the pipeline for user service
-COPY ./jenkins/userPipeline.groovy /usr/share/jenkins/ref/init.groovy.d/userPipeline.groovy
+COPY ./jenkins/ /usr/share/jenkins/ref/init.groovy.d/security.groovy/
 
 # ansible files
 COPY ./ansible/ /var/jenkins_home/ansible/
-COPY ./scripts/create_ansible_container.sh /var/jenkins_home/ansible/create_ansible_container.sh
+COPY ./scripts/ /var/jenkins_home/scripts/
 EXPOSE 8080 50000
