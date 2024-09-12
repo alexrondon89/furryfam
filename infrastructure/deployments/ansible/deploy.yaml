@@ -1,0 +1,25 @@
+---
+- name: Simple playbook de prueba
+  hosts: localhost
+  become: yes
+  tasks:
+
+    - name: Crear un archivo de prueba
+      file:
+        path: /tmp/ansible_test_file.txt
+        state: touch
+
+    - name: Escribir contenido en el archivo
+      copy:
+        content: "Este es un archivo de prueba creado por Ansible\n"
+        dest: /tmp/ansible_test_file.txt
+
+    - name: Verificar si el archivo existe
+      stat:
+        path: /tmp/ansible_test_file.txt
+      register: file_status
+
+    - name: Mostrar mensaje si el archivo fue creado
+      debug:
+        msg: "El archivo fue creado con éxito"
+      when: file_status.stat.exists

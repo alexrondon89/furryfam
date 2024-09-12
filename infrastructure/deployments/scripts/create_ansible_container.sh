@@ -18,11 +18,13 @@ else
 fi
 
 # creating image and container for ansible service
-echo "building and running ${CONTAINER_NAME}"
-docker build -f ./../../infrastructure/deployments/ansible/Dockerfile -t "${IMAGE_NAME}":latest ./../../infrastructure/deployments/ansible
-docker run -d -p <port>:<port> --name --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+if [ "$ENVIRONMENT" != 'local' ]; then
+  echo "building and running ${CONTAINER_NAME} in ${ENVIRONMENT}"
+  docker build --no-cache -t "$IMAGE_NAME":latest -f Dockerfile .
+else
+  echo "building and running ${CONTAINER_NAME} locally"
+  docker build --no-cache -f ./../../../infrastructure/deployments/ansible/Dockerfile -t "$IMAGE_NAME":latest ./../../../infrastructure/deployments/ansible/
+fi
 
-echo "waiting for Jenkins to start..."
-for i in {1..50}; do
-## search how to check that ansible in online
-done
+echo "executing $CONTAINER_NAME $IMAGE_NAME ..."
+docker run --rm --name "${CONTAINER_NAME}" "${IMAGE_NAME}" ansible-playbook ./deploy.yaml

@@ -23,10 +23,10 @@ if [ "$ENVIRONMENT" != 'local' ]; then
   docker build --no-cache -t jenkins-image:latest -f Dockerfile .
 else
   echo "building and running ${CONTAINER_NAME} locally"
-  docker build --no-cache -f ./../../../infrastructure/deployments/jenkins/Dockerfile -t jenkins-image:latest ./../../../infrastructure/deployments/jenkins/
+  docker build --no-cache -f ./../../../infrastructure/deployments/jenkins/Dockerfile -t jenkins-image:latest ./../../../infrastructure/deployments/
 fi
 
-docker run -d -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
 
 # checking if jenkins container is running without asking for initial token
 echo "waiting for Jenkins to start..."

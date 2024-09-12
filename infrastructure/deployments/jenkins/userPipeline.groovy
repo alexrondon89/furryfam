@@ -20,11 +20,20 @@ pipeline {
                 git url: 'https://github.com/alexrondon89/furryfam.git', branch: 'main'
             }
         }
-        stage('Prueba') {
+        stage('Run Ansible') {
             steps {
-                echo 'Este es el stage de prueba'
                 script {
-                    println("Más acciones pueden ser ejecutadas aquí dentro del bloque script.")
+                    // Copiar el archivo `create_ansible_container.sh` al workspace
+                    sh 'cp /var/jenkins_home/ansible/* $WORKSPACE'
+
+                    // Listar los archivos copiados para verificar que deploy.yaml está presente
+                    sh 'ls -l $WORKSPACE'
+
+                    // Dar permisos de ejecución al archivo copiado (por si no los tiene)
+                    sh 'chmod +x $WORKSPACE/create_ansible_container.sh'
+
+                    // Ejecutar el script copiado
+                    sh '$WORKSPACE/create_ansible_container.sh'
                 }
             }
         }
