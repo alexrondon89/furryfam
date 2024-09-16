@@ -4,10 +4,13 @@ ARG FILE_NAME
 
 # Instala las dependencias y Ansible (u otro servicio si deseas)
 RUN apt-get update && apt-get install -y ansible curl
+RUN echo "####### en ansible DOCKERFILE"
+RUN ls
+COPY ./infrastructure/deployments/ansible/$FILE_NAME.yaml ./
+COPY ./services/$FILE_NAME/Dockerfile ./
 
-COPY ./$FILE_NAME.yaml .
 # Expone el puerto que deseas usar para el health check (por ejemplo, 8080)
-EXPOSE 8080
+EXPOSE 8081
 
 # Define el comando por defecto para ejecutar Ansible o algún otro servicio
 CMD [ "ansible", "--version" ]

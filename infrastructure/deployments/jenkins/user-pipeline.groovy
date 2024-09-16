@@ -6,12 +6,15 @@ import org.jenkinsci.plugins.workflow.job.WorkflowJob
 import org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition
 
 // Crear o actualizar un job tipo Pipeline
-def jobName = 'user-service'
+def jobName = 'user-server'
 def jenkins = Jenkins.instance
 def myJob = jenkins.getItem(jobName) ?: jenkins.createProject(WorkflowJob, jobName)
 def pipelineScript = '''
 pipeline {
     agent any  // Define que el pipeline puede ejecutarse en cualquier agente disponible
+    environment{
+        SERVER_NAME = 'user-server'
+    }
 
     stages {
         stage('Git Pull') {
@@ -23,11 +26,6 @@ pipeline {
         stage('Run Ansible') {
             steps {
                 script {
-                    // Copiar el archivo `create_ansible_container.sh` al workspace
-                    //sh 'cp /var/jenkins_home/infrastructure/deployments/scripts/create_ansible_container.sh $WORKSPACE'
-                    //sh 'cp /var/jenkins_home/infrastructure/deployments/ansible/user-service.yaml $WORKSPACE'
-                    //sh 'cp /var/jenkins_home/infrastructure/deployments/ansible/Dockerfile $WORKSPACE'
-
                     // Listar los archivos copiados para verificar que deploy.yaml está presente
                     sh 'ls -l $WORKSPACE'
 
@@ -35,7 +33,7 @@ pipeline {
                     sh 'chmod +x $WORKSPACE/infrastructure/deployments/scripts/create_ansible_container.sh'
 
                     // Ejecutar el script copiado
-                    sh '$WORKSPACE/infrastructure/deployments/scripts/create_ansible_container.sh user-service'
+                    sh '$WORKSPACE/infrastructure/deployments/scripts/create_ansible_container.sh $SERVER_NAME'
                 }
             }
         }

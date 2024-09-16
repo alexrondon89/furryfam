@@ -18,8 +18,14 @@ else
 fi
 
 # creating image and container for jenkins service
-docker build --no-cache -f ./tmp/deployments/jenkins/Dockerfile -t jenkins-image:latest ./tmp/deployments
-docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+if [ "$1" = "local" ]; then
+  echo "running script create_jenkins_container.sh locally..."
+  docker build --no-cache -f ./../jenkins/Dockerfile -t jenkins-image:latest ./../jenkins
+  docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+else
+  docker build --no-cache -f ./tmp/deployments/jenkins/Dockerfile -t jenkins-image:latest ./tmp/deployments/jenkins
+  docker run -d -v /var/run/docker.sock:/var/run/docker.sock -p 8080:8080 -p 50000:50000 --name "${CONTAINER_NAME}" "${IMAGE_NAME}"
+fi
 
 # checking if jenkins container is running without asking for initial token
 echo "waiting for Jenkins to start..."

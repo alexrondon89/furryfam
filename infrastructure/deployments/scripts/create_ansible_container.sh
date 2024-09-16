@@ -1,26 +1,40 @@
 #!/bin/bash
 
-CONTAINER_NAME="$1-container"
-IMAGE_NAME="$1-image"
+ANSIBLE_CONTAINER_NAME="${1}-ansible-container"
+ANSIBLE_IMAGE_NAME="${1}-ansible-image"
 
-if [ "$(docker ps -a -q -f name="${CONTAINER_NAME}")" ]; then
-  echo "container ${CONTAINER_NAME} exists... deleting"
-  docker rm -f "${CONTAINER_NAME}"
+if [ "$(docker ps -a -q -f name="${ANSIBLE_CONTAINER_NAME}")" ]; then
+  echo "container ${ANSIBLE_CONTAINER_NAME} exists... deleting"
+  docker rm -f "${ANSIBLE_CONTAINER_NAME}"
 else
-  echo "container ${CONTAINER_NAME} not exists... creating"
+  echo "container ${ANSIBLE_CONTAINER_NAME} not exists... creating"
 fi
 
-if [ "$(docker images -q "${IMAGE_NAME}")" ]; then
-  echo "image ${IMAGE_NAME} exists... deleting"
-  docker rmi "${IMAGE_NAME}"
+if [ "$(docker images -q "${ANSIBLE_IMAGE_NAME}")" ]; then
+  echo "image ${ANSIBLE_IMAGE_NAME} exists... deleting"
+  docker rmi "${ANSIBLE_IMAGE_NAME}"
 else
-  echo "image ${IMAGE_NAME} not exists... it will be created"
+  echo "image ${ANSIBLE_IMAGE_NAME} not exists... it will be created"
 fi
 
 # creating image and container for ansible service
-echo "building and running ${CONTAINER_NAME} in ${ENVIRONMENT}"
-echo "docker build --build-arg FILE_NAME=$1 --no-cache -t $IMAGE_NAME:latest -f Dockerfile ."
-docker build --build-arg FILE_NAME=$1 --no-cache -t "$IMAGE_NAME":latest -f ./infrastructure/deployments/ansible/Dockerfile ./infrastructure/deployments/ansible/
+echo "building and running ${ANSIBLE_CONTAINER_NAME}"
+echo "####### en ansible script"
+ls
+echo "####### en ansible script"
+echo "docker build --build-arg FILE_NAME=$1 --no-cache -t $ANSIBLE_IMAGE_NAME:latest -f ./infrastructure/deployments/ansible/Dockerfile ."
+docker build --build-arg FILE_NAME=$1 --no-cache -t "$ANSIBLE_IMAGE_NAME":latest -f ./../ansible/Dockerfile ./../../../
 
-echo "executing $CONTAINER_NAME $IMAGE_NAME ..."
-docker run --rm --name "${CONTAINER_NAME}" "${IMAGE_NAME}" ansible-playbook ./$1.yaml
+echo "executing $ANSIBLE_CONTAINER_NAME $ANSIBLE_IMAGE_NAME ..."
+docker run -d --name "${ANSIBLE_CONTAINER_NAME}" "${ANSIBLE_IMAGE_NAME}:latest"
+
+echo "building $1 image"
+docker exec "$ANSIBLE_CONTAINER_NAME" docker build -t $1:latest . .
+
+echo "login in dockerhub and pushing image"
+docker exec "$ANSIBLE_CONTAINER_NAME" docker login
+docker exec "$ANSIBLE_CONTAINER_NAME" docker login -u alexrondon89 -p Cr1sa!3x8960
+docker exec "$ANSIBLE_CONTAINER_NAME" docker tag $1:latest alexrondon89/$1:latest
+
+echo "pushing image in dockerhub"
+docker exec "$ANSIBLE_CONTAINER_NAME" docker push alexrondon89/$1:latest
