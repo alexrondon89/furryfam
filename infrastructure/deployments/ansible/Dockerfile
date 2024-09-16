@@ -2,6 +2,9 @@
 FROM ubuntu:20.04
 ARG FILE_NAME
 
+#instala tambien el daemon que no es necesario, to check a liger installing
+RUN apt-get update && apt-get install -y docker.io wget
+
 # Instala las dependencias y Ansible (u otro servicio si deseas)
 RUN apt-get update && apt-get install -y ansible curl
 RUN echo "####### en ansible DOCKERFILE"
