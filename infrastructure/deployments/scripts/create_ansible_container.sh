@@ -22,8 +22,7 @@ echo "building and running ${ANSIBLE_CONTAINER_NAME}"
 echo "####### en ansible script"
 ls
 echo "####### en ansible script"
-echo "docker build --build-arg FILE_NAME=$1 --no-cache -t $ANSIBLE_IMAGE_NAME:latest -f ./infrastructure/deployments/ansible/Dockerfile ."
-docker build --build-arg FILE_NAME=$1 --no-cache -t "$ANSIBLE_IMAGE_NAME":latest -f ./../ansible/Dockerfile ./../../../
+docker build --build-arg FILE_NAME=$1 --no-cache -t "$ANSIBLE_IMAGE_NAME":latest -f ./infrastructure/deployments/ansible/Dockerfile .
 
 echo "executing $ANSIBLE_CONTAINER_NAME $ANSIBLE_IMAGE_NAME ..."
 docker run -d --name "${ANSIBLE_CONTAINER_NAME}" "${ANSIBLE_IMAGE_NAME}:latest"
