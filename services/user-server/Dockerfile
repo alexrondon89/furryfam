@@ -10,5 +10,5 @@ RUN GO111MODULE=on go build -mod-vendor -o $BINARY_NAME .
 
 FROM alpine:3.19
 WORKDIR /app
-COPY from=builder /app/$BINARY_NAME .
+COPY --from=builder /app/$BINARY_NAME .
 ENTRYPOINT ["/app/$BINARY_NAME"]

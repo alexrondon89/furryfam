@@ -25,7 +25,7 @@ pipeline {
         }
         stage('create docker image') {
             steps {
-                sh 'docker build --no-cache -t $SERVER_NAME:latest -f $WORKSPACE/services/$SERVER_NAME/Dockerfile ./'
+                sh 'docker build --no-cache -t $SERVER_NAME:latest -f $WORKSPACE/services/$SERVER_NAME/Dockerfile $WORKSPACE/services/$SERVER_NAME/'
                 sh 'docker login -u alexrondon89 -p Cr1sa!3x8960'
                 sh 'docker tag $SERVER_NAME:latest alexrondon89/$SERVER_NAME:latest'
                 sh 'docker push alexrondon89/$SERVER_NAME:latest'
