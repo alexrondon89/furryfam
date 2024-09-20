@@ -28,7 +28,7 @@ echo "executing $ANSIBLE_CONTAINER_NAME $ANSIBLE_IMAGE_NAME ..."
 docker run -v /var/run/docker.sock:/var/run/docker.sock -d --name "${ANSIBLE_CONTAINER_NAME}" "${ANSIBLE_IMAGE_NAME}:latest"
 
 echo "building $1 image"
-docker exec "$ANSIBLE_CONTAINER_NAME" docker build -t $1:latest -f ./Dockerfile .
+docker exec "$ANSIBLE_CONTAINER_NAME" docker build --no-cache -t $1:latest -f ./Dockerfile ./
 
 echo "login in dockerhub and pushing image"
 docker exec "$ANSIBLE_CONTAINER_NAME" docker login -u alexrondon89 -p Cr1sa!3x8960
