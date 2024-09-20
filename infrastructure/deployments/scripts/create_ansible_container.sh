@@ -26,13 +26,3 @@ docker build --build-arg FILE_NAME=$1 --no-cache -t "$ANSIBLE_IMAGE_NAME":latest
 
 echo "executing $ANSIBLE_CONTAINER_NAME $ANSIBLE_IMAGE_NAME ..."
 docker run -v /var/run/docker.sock:/var/run/docker.sock -d --name "${ANSIBLE_CONTAINER_NAME}" "${ANSIBLE_IMAGE_NAME}:latest"
-
-echo "building $1 image"
-docker exec "$ANSIBLE_CONTAINER_NAME" docker build --no-cache -t $1:latest -f ./Dockerfile ./
-
-echo "login in dockerhub and pushing image"
-docker exec "$ANSIBLE_CONTAINER_NAME" docker login -u alexrondon89 -p Cr1sa!3x8960
-docker exec "$ANSIBLE_CONTAINER_NAME" docker tag $1:latest alexrondon89/$1:latest
-
-echo "pushing image in dockerhub"
-docker exec "$ANSIBLE_CONTAINER_NAME" docker push alexrondon89/$1:latest
