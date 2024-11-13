@@ -1,7 +1,7 @@
 #!/bin/bash
 
 K8S_CONTAINER_NAME="${1}-k8s-container"
-K8S_CONTAINER_IMAGE="${1}-K8s-image"
+K8S_CONTAINER_IMAGE="${1}-k8s-image"
 
 if [ -n "$(docker ps -a -q -f name=$K8S_CONTAINER_NAME)" ]; then
   echo "$K8S_CONTAINER_NAME is running"
