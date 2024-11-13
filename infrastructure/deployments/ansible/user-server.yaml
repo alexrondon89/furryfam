@@ -1,5 +1,5 @@
 - name: Desplegar aplicación en Kubernetes
-  hosts: "locahost"
+  hosts: "local-server"
   tasks:
     - block:
       - name: Mostrar mensaje si el target es localhost
@@ -15,4 +15,4 @@
       #   community.kubernetes.k8s:
       #     state: present
       #     definition: "{{ lookup('file', './../../k8s/' + {{ service }} + '/deployment.yaml') }}"
-    when: target_group == 'localhost'
+      #when: target_group == 'localhost'
