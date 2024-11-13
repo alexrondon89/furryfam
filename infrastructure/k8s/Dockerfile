@@ -8,6 +8,12 @@ ARG K3S_VERSION=v1.24.4+k3s1
 ENV INSTALL_K3S_VERSION=${K3S_VERSION}
 
 # Instalar dependencias necesarias
+RUN apk add --no-cache curl bash openrc
+
+# Iniciar openrc para cumplir con los requisitos de K3s
+RUN openrc && touch /run/openrc/softlevel
+
+# Instalar dependencias necesarias
 RUN apk add --no-cache curl bash
 
 # Descargar e instalar K3s
