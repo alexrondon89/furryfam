@@ -25,6 +25,6 @@ echo "####### en ansible script"
 docker build --build-arg FILE_NAME=$1 --no-cache -t "$ANSIBLE_IMAGE_NAME":latest -f ./infrastructure/deployments/ansible/Dockerfile .
 
 echo "executing $ANSIBLE_CONTAINER_NAME $ANSIBLE_IMAGE_NAME ..."
-docker run --rm \
+docker run \
   -v /var/run/docker.sock:/var/run/docker.sock \
   -d --name "${ANSIBLE_CONTAINER_NAME}" "${ANSIBLE_IMAGE_NAME}:latest"
