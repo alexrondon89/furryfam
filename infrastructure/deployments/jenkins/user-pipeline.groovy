@@ -31,6 +31,14 @@ pipeline {
                 sh 'docker push alexrondon89/$SERVER_NAME:latest'
             }
         }
+        stage('create k8s container') {
+            steps {
+                echo 'running create_k8s_container.sh'
+                sh 'chmod +x $WORKSPACE/infrastructure/deployments/scripts/create_k8s_container.sh'
+                sh '$WORKSPACE/infrastructure/deployments/scripts/create_k8s_container.sh $SERVER_NAME'
+                echo 'itll run the playbook.... '
+            }
+        }
         stage('Run Ansible') {
             steps {
                 script {

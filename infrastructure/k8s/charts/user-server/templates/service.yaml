@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.service_name }} # El nombre del servicio
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: "{{ .Values.app_label }}" # Etiquetas opcionales para identificar el servicio
+spec:
+  type: LoadBalancer
+  selector:
+    app: "{{ .Values.app_label }}" # Debe coincidir con las etiquetas de los pods que deseas exponer
+  ports:
+    - protocol: TCP
+      port: {{ .Values.port }}            # Puerto expuesto por el servicio
+      targetPort: {{ .Values.container_port }}      # Puerto en el que escucha el contenedor

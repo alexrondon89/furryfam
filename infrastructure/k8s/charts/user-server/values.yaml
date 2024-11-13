@@ -1,0 +1,11 @@
+target_group: "locahost"
+deployment_name: "user-service-deployment"
+service_name: "user-service"
+namespace: myfurry
+app_label: "user-service"
+replicas: 3
+container_name: "user-service-container"
+container_image: "user-service-image"
+container_port: 4000
+port: 5000
+environment: "local"

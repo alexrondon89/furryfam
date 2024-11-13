@@ -1,25 +1,18 @@
----
-- name: Simple playbook de prueba
-  hosts: localhost
-  become: yes
+- name: Desplegar aplicación en Kubernetes
+  hosts: "locahost"
   tasks:
+    - block:
+      - name: Mostrar mensaje si el target es localhost
+        debug:
+          msg: "Aplicando el deploy del user-server en localhost"
 
-    - name: Crear un archivo de prueba
-      file:
-        path: /tmp/ansible_test_file.txt
-        state: touch
-
-    - name: Escribir contenido en el archivo
-      copy:
-        content: "Este es un archivo de prueba creado por Ansible\n"
-        dest: /tmp/ansible_test_file.txt
-
-    - name: Verificar si el archivo existe
-      stat:
-        path: /tmp/ansible_test_file.txt
-      register: file_status
-
-    - name: Mostrar mensaje si el archivo fue creado
-      debug:
-        msg: "El archivo fue creado con éxito"
-      when: file_status.stat.exists
+      - name: Deploy application using Helm
+        community.kubernetes.helm:
+          name: "my-user-server-release"
+          chart: "./charts/user-server"
+          values: "./charts/user-server/values.yaml"
+      # - name: Aplicar el Deployment en Kubernetes
+      #   community.kubernetes.k8s:
+      #     state: present
+      #     definition: "{{ lookup('file', './../../k8s/' + {{ service }} + '/deployment.yaml') }}"
+    when: target_group == 'localhost'

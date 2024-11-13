@@ -3,19 +3,19 @@
 CONTAINER_NAME="jenkins-container"
 IMAGE_NAME="jenkins-image"
 
-if [ "$(docker ps -a -q -f name="${CONTAINER_NAME}")" ]; then
-  echo "container ${CONTAINER_NAME} exists... deleting"
-  docker rm -f "${CONTAINER_NAME}"
-else
-  echo "container ${CONTAINER_NAME} not exists... creating"
-fi
+# if [ "$(docker ps -a -q -f name="${CONTAINER_NAME}")" ]; then
+#   echo "container ${CONTAINER_NAME} exists... deleting"
+#   docker rm -f "${CONTAINER_NAME}"
+# else
+#   echo "container ${CONTAINER_NAME} not exists... creating"
+# fi
 
-if [ "$(docker images -q "${IMAGE_NAME}")" ]; then
-  echo "image ${IMAGE_NAME} exists... deleting"
-  docker rmi "${IMAGE_NAME}"
-else
-  echo "image ${IMAGE_NAME} not exists... it will be created"
-fi
+# if [ "$(docker images -q "${IMAGE_NAME}")" ]; then
+#   echo "image ${IMAGE_NAME} exists... deleting"
+#   docker rmi "${IMAGE_NAME}"
+# else
+#   echo "image ${IMAGE_NAME} not exists... it will be created"
+# fi
 
 # creating image and container for jenkins service
 if [ "$1" = "local" ]; then

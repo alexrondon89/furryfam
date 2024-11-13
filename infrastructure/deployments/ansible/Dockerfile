@@ -11,11 +11,11 @@ RUN apt-get update && apt-get install -y docker.io wget
 RUN apt-get update && apt-get install -y ansible curl
 RUN echo "####### en ansible DOCKERFILE"
 RUN ls
-COPY ./infrastructure/deployments/ansible/$FILE_NAME.yaml ./
-COPY ./services/$FILE_NAME ./
+COPY ./infrastructure/deployments/ansible/$FILE_NAME.yaml ./playbook.yaml
+COPY ./infrastructure/k8s/charts/$FILE_NAME ./charts/$FILE_NAME
 
 # Expone el puerto que deseas usar para el health check (por ejemplo, 8080)
 EXPOSE 8081
 
 # Define el comando por defecto para ejecutar Ansible o algún otro servicio
-CMD [ "ansible", "--version" ]
+CMD ["ansible-playbook", "playbook.yaml"]

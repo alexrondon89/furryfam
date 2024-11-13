@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Values.deployment_name }}"  # Nombre del despliegue
+  namespace: "{{ .Values.namespace }}" # Espacio de nombres donde se realizará el despliegue
+  labels:
+    app: "{{ .Values.app_label }}" # Etiqueta del despliegue
+spec:
+  replicas: "{{ .Values.replicas }}"  # Número de réplicas
+  selector:
+    matchLabels:
+      app: "{{ .Values.app_label }}" # Selector que coincide con las etiquetas de los pods
+  template:
+    metadata:
+      labels:
+        app: "{{ .Values.app_label }}" # Etiquetas para los pods creados
+    spec:
+      containers:
+        - name: "{{ .Values.container_name }}" # Nombre del contenedor
+          image: "{{ .Values.container_image }}" # imagen del contenedor
+          ports:
+            - containerPort: "{{ .Values.container_port }}" # Puerto expuesto por el contenedor
+          env:
+            - name: ENVIRONMENT
+              value: "{{ .Values.environment }}"
